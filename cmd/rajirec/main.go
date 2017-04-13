@@ -1,12 +1,20 @@
 package main
 
 import (
-	"log"
+	"github.com/google/subcommands"
+	"flag"
+	"context"
+	"os"
 
 	"github.com/hitochan777/rajirec"
 )
 
 func main(){
-	log.Println("recording...")
-	rajirec.Record("rtmpe://netradio-r2-flash.nhk.jp/live/NetRadio_R2_flash@63342", "hoge.m4a")
+
+	subcommands.Register(subcommands.HelpCommand(), "")
+	subcommands.Register(&rajirec.RecordCmd{}, "")
+
+	flag.Parse()
+	ctx := context.Background()
+	os.Exit(int(subcommands.Execute(ctx)))
 }
