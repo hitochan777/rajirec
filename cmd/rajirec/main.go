@@ -13,6 +13,7 @@ func main(){
 
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(&rajirec.RecordCmd{}, "")
+	subcommands.Register(&rajirec.AreaCmd{}, "")
 
 	flag.Parse()
 	ctx := context.Background()
