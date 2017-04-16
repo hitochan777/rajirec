@@ -1,6 +1,8 @@
-hash: 449ef14019a464797a13da5c780c262eb28fa7c0577b96a7bd7ec8e1113a3c11
-updated: 2017-04-13T23:04:43.649129895+09:00
+hash: 869b20ea32e7fa867714065deef7d1b8872d0f86713974325b39113cf2cdd729
+updated: 2017-04-17T00:13:10.815858015+09:00
 imports:
 - name: github.com/google/subcommands
   version: ce3d4cfc062faac7115d44e5befec8b5a08c3faa
+- name: github.com/mattn/go-sqlite3
+  version: cf7286f069c3ef596efcc87781a4653a2e7607bd
 testImports: []
