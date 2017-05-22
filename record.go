@@ -8,11 +8,13 @@ import (
 	"strings"
 	"flag"
 	"context"
+	"strconv"
+
 	"github.com/google/subcommands"
 )
 
 type RecordCmd struct {
-	duration string
+	duration int
 	stationId string
 	outputFile string
 }
@@ -23,20 +25,20 @@ func (*RecordCmd) Usage() string {
 	return "Record live stream\n"
 }
 func (r *RecordCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&r.duration, "duration", "", "duration of recording")
+	f.IntVar(&r.duration, "duration", 0, "duration of recording")
 	f.StringVar(&r.stationId, "areaid", "", "Station ID")
 	f.StringVar(&r.outputFile, "output", "", "path to output file")
 }
 
 func (r *RecordCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	log.Println("recording...")
-	areas := NewAreas(GetConfigFilename())
+	areas := NewAreas(API_URL)
 
-	Record(areas[r.stationId].R2, r.outputFile)
+	Record(areas[r.stationId].R2, r.outputFile, r.duration)
 	return subcommands.ExitSuccess
 }
 
-func Record(streamURL string, outputPath string) {
+func Record(streamURL string, outputPath string, duration int) {
 	rtmpdumpPath, err := exec.LookPath("rtmpdump")
 	if err != nil {
 		log.Fatal("rtmpdump is not installed")
@@ -51,6 +53,7 @@ func Record(streamURL string, outputPath string) {
 		"--playpath", playPath,
 		"--swfVfy", "http://www3.nhk.or.jp/netradio/files/swf/rtmpe.swf",
 		"--app", app,
+		"--stop", strconv.Itoa(duration),
 		"--live",
 		"-o", outputPath,
 	).Run()

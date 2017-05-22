@@ -1,0 +1,10 @@
+Schedules ::= Schedule+
+Schedule ::= 'every' ('weekday' | 'weekend') 
+             | 'at' Time(','Time)*
+             | 'on' Day(','Day)*
+
+Time ::=  ((([0]?[1-9]|'1'[0-2])':'[0-5]Digit (' ')?('am'|'pm'))|(([0]?Digit|'1'Digit|'2'[0-3])':'[0-5]Digit))
+Day ::= 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' 
+
+ZeroDigit ::= '0' | NonZeroDigit
+NonZeroDigit ::= '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'

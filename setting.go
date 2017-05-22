@@ -32,6 +32,4 @@ func (s *SettingCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{
 	return subcommands.ExitSuccess
 }
 
-func GetConfigFilename() string {
-	return "http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml"
-}
+const API_URL = "http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml";
