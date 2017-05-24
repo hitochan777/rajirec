@@ -67,7 +67,8 @@ func (t *Tokenizer) Tokenize(str string) ([]Token, error) {
 			if len(index) != 0 {
 				match = true
 				tokens = append(tokens, Token{tokenInfo.token, str[index[0]:index[1]]})
-				str = str[index[1]:]
+				str = strings.TrimSpace(str[index[1]:])
+				log.Println(str)
 			}
 		}
 		if !match {
@@ -78,6 +79,7 @@ func (t *Tokenizer) Tokenize(str string) ([]Token, error) {
 }
 
 func (t *Tokenizer) addPattern(pattern string, token TokenCode) {
+	pattern = "^(" + pattern + ")"
 	for _, tokenInfo := range t.tokenInfos {
 		if tokenInfo.token == token {
 			log.Fatal("token code " + strconv.Itoa(int(token)) + " already exists in the tokenizer")
@@ -88,13 +90,13 @@ func (t *Tokenizer) addPattern(pattern string, token TokenCode) {
 
 func NewTokenizer() *Tokenizer {
 	tokenizer := &Tokenizer{}
-	tokenizer.addPattern("^\\s*((([0]?[1-9]|1[0-2]):[0-5]\\d( )?(am|pm))|(([0]?\\d|1\\d|2[0-3]):[0-5]\\d))\\s*", TIME)
-	tokenizer.addPattern("^\\s*(every)\\s*", EVERY)
-	tokenizer.addPattern("^\\s*(weekday)\\s*", WEEKDAY)
-	tokenizer.addPattern("^\\s*(weekend)\\s*", WEEKEND)
-	tokenizer.addPattern("^\\s*(at)\\s*", AT)
-	tokenizer.addPattern("^\\s*(on)\\s*", ON)
-	tokenizer.addPattern("^\\s*(,)\\s*", COMMA)
-	tokenizer.addPattern("^\\s*(sun|mon|tue|wed|thu|fri|sat|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\\s*", DAY)
+	tokenizer.addPattern("(([0]?[1-9]|1[0-2])(:[0-5]\\d(\\s)?)?(am|pm))|(([0]?\\d|1\\d|2[0-3]):[0-5]\\d)", TIME)
+	tokenizer.addPattern("every", EVERY)
+	tokenizer.addPattern("weekday", WEEKDAY)
+	tokenizer.addPattern("weekend", WEEKEND)
+	tokenizer.addPattern("at", AT)
+	tokenizer.addPattern("on", ON)
+	tokenizer.addPattern(",", COMMA)
+	tokenizer.addPattern("sun|mon|tue|wed|thu|fri|sat|sunday|monday|tuesday|wednesday|thursday|friday|saturday", DAY)
 	return tokenizer
 }
