@@ -3,6 +3,7 @@ package scheduler
 import (
 	"log"
 	"reflect"
+	"time"
 )
 
 type Schedule struct {
@@ -32,13 +33,28 @@ func NewSchedule(time []int, month []int, day []int) *Schedule {
 type Parser struct {
 	tokenizer *Tokenizer
 	tokens []Token
-	lookahead Token
+	schedule *Schedule
 }
 
 func NewParser() *Parser {
 	tokenizer := NewTokenizer()
-	parser := &Parser{tokenizer:tokenizer}
+	schedule := NewSchedule([]int{}, []int{}, []int{})
+	parser := &Parser{tokenizer:tokenizer, schedule:schedule}
 	return parser
+}
+
+func (p *Parser) getCurrentToken() *Token {
+	if len(p.tokens) == 0 {
+		return nil
+	} else {
+		return &p.tokens[0]
+	}
+}
+
+func (p *Parser) nextToken() {
+	if len(p.tokens) > 0 {
+		p.tokens = p.tokens[1:]
+	}
 }
 
 func (p *Parser) Parse(str string) *Schedule{
@@ -50,8 +66,86 @@ func (p *Parser) Parse(str string) *Schedule{
 }
 
 func (p *Parser) parseTokens(tokens []Token) *Schedule{
-	//TODO: implement
-	schedule := &Schedule{}
-	return schedule
+	p.setTokens(tokens)
+	p.parseSchedule()
+}
+
+func (p *Parser) parseSchedule() *Schedule {
+	token := p.getCurrentToken()
+	for token != nil {
+		switch token.GetTokenCode() {
+		case EVERY:
+			p.parseEvery()
+			break
+		case AT:
+			p.parseAt()
+			break
+		case ON:
+			p.parseOn()
+			break
+		default:
+			log.Fatal("Failed to parse")
+			break
+		}
+		p.nextToken()
+		token = p.getCurrentToken()
+	}
+}
+
+func (p *Parser) parseEvery() {
+	token := p.getCurrentToken()
+	switch token.GetTokenCode() {
+	case WEEKDAY:
+		p.schedule.Day = AppendAllIfMissing(p.schedule.Day, []int{1, 2, 3, 4, 5})
+		break
+	case WEEKEND:
+     	p.schedule.Day = AppendAllIfMissing(p.schedule.Day, []int{0, 6})
+		break
+	default:
+		log.Fatal("Failed to parse")
+		break
+	}
+	p.nextToken()
+}
+
+func (p *Parser) parseAt() *Schedule {
+	token := p.getCurrentToken()
+	var sched *Schedule
+
+	if token.GetTokenCode() == AT {
+		value := token.GetValue()
+		regex := p.tokenizer.tokenInfos[AT].regex
+		match := regex.FindStringSubmatch(value)
+		paramsMap := make(map[string]string)
+		for i, name := range regex.SubexpNames() {
+			if i > 0 && i <= len(match) {
+				paramsMap[name] = match[i]
+			}
+		}
+
+	} else {
+		log.Fatal("Failed to parse")
+	}
+	p.nextToken()
+	return sched
+}
+
+func (p *Parser) parseOn() *Schedule {
+	token := p.getCurrentToken()
+	var sched *Schedule
+	p.nextToken()
+	return sched
+}
+
+func (p *Parser) parseTime() *Schedule {
+
+}
+
+func (p *Parser) parseDay() *Schedule {
+
+}
+
+func (p *Parser) setTokens(tokens []Token) {
+	p.tokens = tokens
 }
 

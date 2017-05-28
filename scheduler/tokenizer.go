@@ -22,26 +22,46 @@ const (
 )
 
 type Token struct {
-	token TokenCode
-	name string
+	value string
+	tokenCode TokenCode
+	paramMap map[string]string
 }
 
-func (t Token) GetName() string {
-	return t.name
+func (t *Token) GetParamMap() map[string]string {
+	return t.paramMap
 }
 
-func (t Token) GetTokenCode() TokenCode {
-	return t.token
+func (t *Token) GetTokenCode() TokenCode {
+	return t.tokenCode
+}
+
+func (t *Token) GetValue() string {
+	return t.value
 }
 
 type TokenInfo struct {
 	regex *regexp.Regexp
-	token TokenCode
+	tokenCode TokenCode
+}
+
+func (ti *TokenInfo) GetTokenCode() TokenCode {
+	return ti.tokenCode
 }
 
 func (ti *TokenInfo) FindIndex(str string) []int {
 	index := ti.regex.FindIndex([]byte(strings.ToLower(str)))
 	return index
+}
+
+func (ti *TokenInfo) GetParams(str string) (paramsMap map[string]string) {
+	match := ti.regex.FindStringSubmatch(str)
+	paramsMap = make(map[string]string)
+	for i, name := range ti.regex.SubexpNames() {
+		if i > 0 && i <= len(match) {
+			paramsMap[name] = match[i]
+		}
+	}
+	return
 }
 
 func NewTokenInfo(regexString string, token TokenCode) *TokenInfo {
@@ -55,20 +75,20 @@ func NewTokenInfo(regexString string, token TokenCode) *TokenInfo {
 }
 
 type Tokenizer struct {
-	tokenInfos []TokenInfo
+	tokenInfos map[TokenCode]TokenInfo
 }
 
 func (t *Tokenizer) Tokenize(str string) ([]Token, error) {
 	tokens := []Token{}
 	for len(str) != 0 {
 		match := false
-		for _, tokenInfo := range t.tokenInfos {
+		for tokenCode, tokenInfo := range t.tokenInfos {
 			index := tokenInfo.FindIndex(str)
+			paramMap := tokenInfo.GetParams(str)
 			if len(index) != 0 {
 				match = true
-				tokens = append(tokens, Token{tokenInfo.token, str[index[0]:index[1]]})
+				tokens = append(tokens, Token{paramMap: paramMap, tokenCode: tokenCode, value:str[index[0]:index[1]]})
 				str = strings.TrimSpace(str[index[1]:])
-				log.Println(str)
 			}
 		}
 		if !match {
@@ -78,19 +98,17 @@ func (t *Tokenizer) Tokenize(str string) ([]Token, error) {
 	return tokens, nil
 }
 
-func (t *Tokenizer) addPattern(pattern string, token TokenCode) {
+func (t *Tokenizer) addPattern(pattern string, tokenCode TokenCode) {
 	pattern = "^(" + pattern + ")"
-	for _, tokenInfo := range t.tokenInfos {
-		if tokenInfo.token == token {
-			log.Fatal("token code " + strconv.Itoa(int(token)) + " already exists in the tokenizer")
-		}
+	if _, ok := t.tokenInfos[tokenCode]; !ok {
+		log.Fatal("token code " + strconv.Itoa(int(tokenCode)) + " already exists in the tokenizer")
 	}
-	t.tokenInfos = append(t.tokenInfos, *NewTokenInfo(pattern, token))
+	t.tokenInfos[tokenCode] = *NewTokenInfo(pattern, tokenCode)
 }
 
 func NewTokenizer() *Tokenizer {
 	tokenizer := &Tokenizer{}
-	tokenizer.addPattern("(([0]?[1-9]|1[0-2])(:[0-5]\\d(\\s)?)?(am|pm))|(([0]?\\d|1\\d|2[0-3]):[0-5]\\d)", TIME)
+	tokenizer.addPattern("((?P<hour>[0]?[1-9]|1[0-2])(:(?<minute>[0-5]\\d)(\\s)?)?(?<period>am|pm))|((?<hour>[0]?\\d|1\\d|2[0-3]):(?<minute>[0-5]\\d))", TIME)
 	tokenizer.addPattern("every", EVERY)
 	tokenizer.addPattern("weekday", WEEKDAY)
 	tokenizer.addPattern("weekend", WEEKEND)
