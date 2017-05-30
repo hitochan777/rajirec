@@ -18,9 +18,11 @@ func TestParser_Parse(t *testing.T) {
 	}
 	p := NewParser()
 	for _, test := range tests {
-		schedule := p.Parse(test.input)
-		if !schedule.Compare(&test.expected) {
-			t.Error(schedule, test.expected)
+		if err := p.Parse(test.input); err !=nil {
+			t.Error(err)
+		}
+		if !p.schedule.Compare(&test.expected) {
+			t.Error(p.schedule, test.expected)
 		}
 	}
 }

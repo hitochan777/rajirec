@@ -115,6 +115,6 @@ func NewTokenizer() *Tokenizer {
 	tokenizer.addPattern("at", AT)
 	tokenizer.addPattern("on", ON)
 	tokenizer.addPattern(",", COMMA)
-	tokenizer.addPattern("sun|mon|tue|wed|thu|fri|sat|sunday|monday|tuesday|wednesday|thursday|friday|saturday", DAY)
+	tokenizer.addPattern("(?P<weekday>sun|mon|tue|wed|thu|fri|sat|sunday|monday|tuesday|wednesday|thursday|friday|saturday)", DAY)
 	return tokenizer
 }
