@@ -58,6 +58,9 @@ func (ti *TokenInfo) GetParams(str string) (paramsMap map[string]string) {
 	paramsMap = make(map[string]string)
 	for i, name := range ti.regex.SubexpNames() {
 		if i > 0 && i <= len(match) {
+			if val, ok := paramsMap[name]; ok && len(val) > 0 {
+				continue
+			}
 			paramsMap[name] = match[i]
 		}
 	}
@@ -66,9 +69,14 @@ func (ti *TokenInfo) GetParams(str string) (paramsMap map[string]string) {
 
 func NewTokenInfo(regexString string, token TokenCode) *TokenInfo {
 	regex, err := regexp.Compile(regexString)
+	if err != nil {
+		log.Println("Failed to compile " + regexString)
+		return nil
+	}
 	regex.Longest()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil
 	}
 	tokenInfo := &TokenInfo{regex, token}
 	return tokenInfo
@@ -100,15 +108,15 @@ func (t *Tokenizer) Tokenize(str string) ([]Token, error) {
 
 func (t *Tokenizer) addPattern(pattern string, tokenCode TokenCode) {
 	pattern = "^(" + pattern + ")"
-	if _, ok := t.tokenInfos[tokenCode]; !ok {
+	if _, ok := t.tokenInfos[tokenCode]; ok {
 		log.Fatal("token code " + strconv.Itoa(int(tokenCode)) + " already exists in the tokenizer")
 	}
 	t.tokenInfos[tokenCode] = *NewTokenInfo(pattern, tokenCode)
 }
 
 func NewTokenizer() *Tokenizer {
-	tokenizer := &Tokenizer{}
-	tokenizer.addPattern("((?P<hour>[0]?[1-9]|1[0-2])(:(?<minute>[0-5]\\d)(\\s)?)?(?<period>am|pm))|((?<hour>[0]?\\d|1\\d|2[0-3]):(?<minute>[0-5]\\d))", TIME)
+	tokenizer := &Tokenizer{tokenInfos: make(map[TokenCode]TokenInfo)}
+	tokenizer.addPattern("((?P<hour>[0]?[1-9]|1[0-2])(:(?P<minute>[0-5]\\d)(\\s)?)?(?P<period>am|pm))|((?P<hour>[0]?\\d|1\\d|2[0-3]):(?P<minute>[0-5]\\d))", TIME)
 	tokenizer.addPattern("every", EVERY)
 	tokenizer.addPattern("weekday", WEEKDAY)
 	tokenizer.addPattern("weekend", WEEKEND)

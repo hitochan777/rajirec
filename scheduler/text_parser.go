@@ -8,7 +8,6 @@ import (
 
 type Schedule struct {
 	Time []int
-	Month []int
 	Day []int
 }
 
@@ -34,8 +33,8 @@ func (sched1 *Schedule) Compare(sched2 *Schedule) bool {
 	return reflect.DeepEqual(*sched1, *sched2)
 }
 
-func NewSchedule(time []int, month []int, day []int) *Schedule {
-	return &Schedule{time, month, day}
+func NewSchedule(time []int, day []int) *Schedule {
+	return &Schedule{time, day}
 }
 
 type Parser struct {
@@ -46,7 +45,7 @@ type Parser struct {
 
 func NewParser() *Parser {
 	tokenizer := NewTokenizer()
-	schedule := NewSchedule([]int{}, []int{}, []int{})
+	schedule := NewSchedule([]int{}, []int{})
 	parser := &Parser{tokenizer:tokenizer, schedule:schedule}
 	return parser
 }
@@ -65,8 +64,13 @@ func (p *Parser) nextToken() {
 	}
 }
 
+func (p *Parser) clearSchedule(){
+	p.schedule = NewSchedule([]int{}, []int{})
+}
+
 func (p *Parser) Parse(str string) error {
 	tokens, err := p.tokenizer.Tokenize(str)
+	p.clearSchedule()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,16 +96,22 @@ func (p *Parser) parseSchedule() error {
 			p.parseOn()
 			break
 		default:
-			return ParseError{"Failed to Parse"}
+			return &ParseError{"Failed to Parse in parseSchedule"}
 			break
 		}
-		p.nextToken()
 		token = p.getCurrentToken()
+	}
+	if len(p.schedule.Day) == 0 {
+		p.schedule.Day = []int{0, 1, 2, 3, 4, 5, 6}
 	}
 	return nil
 }
 
 func (p *Parser) parseEvery() error {
+	if p.getCurrentToken().GetTokenCode() != EVERY {
+		return &ParseError{"Failed to parse in parseEvery"}
+	}
+	p.nextToken()
 	token := p.getCurrentToken()
 	switch token.GetTokenCode() {
 	case WEEKDAY:
@@ -111,7 +121,7 @@ func (p *Parser) parseEvery() error {
      	p.schedule.Day = AppendAllIfMissing(p.schedule.Day, []int{0, 6})
 		break
 	default:
-		return ParseError{"Failed to Parse"}
+		return &ParseError{"Failed to Parse in parseEvery"}
 		break
 	}
 	p.nextToken()
@@ -124,21 +134,24 @@ func (p *Parser) parseAt() error {
 		p.nextToken()
 		p.parseTime()
 	} else {
-		return ParseError{"Failed to Parse"}
+		return &ParseError{"Failed to Parse in parseAt"}
 	}
-	p.nextToken()
 	return nil
 }
 
 func (p *Parser) parseOn() error {
 	token := p.getCurrentToken()
 	if token.GetTokenCode() == ON {
-		p.nextToken()
-		p.parseTime()
+		for true {
+			p.nextToken()
+			p.parseDay()
+			if token := p.getCurrentToken(); token == nil || token.GetTokenCode() != COMMA {
+				break
+			}
+		}
 	} else {
-		return ParseError{"Failed to parse"}
+		return &ParseError{"Failed to parse in parseOn"}
 	}
-	p.nextToken()
 	return nil
 }
 
@@ -153,17 +166,17 @@ func (p *Parser) parseTime() error {
 		time += 12 * 3600 // add 12 hours
 	}
 	if minute != "" {
-		if intMinute, err := strconv.Atoi(minute); err != nil {
+		if intMinute, err := strconv.Atoi(minute); err == nil {
 			time += intMinute * 60
 		} else {
-			return ParseError{"Failed to parse"}
+			return &ParseError{"Failed to parse in parseTime"}
 		}
 	}
 
-	if intHour, err := strconv.Atoi(hour); err != nil {
+	if intHour, err := strconv.Atoi(hour); err == nil {
 		time += intHour * 3600
 	} else {
-		return ParseError{"Failed to parse"}
+		return &ParseError{"Failed to parse in parseTime"}
 	}
    	p.schedule.Time = AppendIfMissing(p.schedule.Time, time)
 	p.nextToken()
@@ -198,9 +211,10 @@ func (p *Parser) parseDay() error {
 		weekday = 6
 		break
 	default:
-		return ParseError{"Failed to parse"}
+		return &ParseError{"Failed to parse in parseDay"}
 	}
 	p.schedule.Day = AppendIfMissing(p.schedule.Day, weekday)
+	p.nextToken()
 	return nil
 }
 
