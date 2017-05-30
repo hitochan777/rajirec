@@ -1,4 +1,3 @@
 package: github.com/hitochan777/rajirec
 import:
 - package: github.com/google/subcommands
-- package: github.com/mattn/go-sqlite3
