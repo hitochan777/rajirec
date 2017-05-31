@@ -1,4 +1,4 @@
-package scheduler
+package rajirec
 
 func AppendAllIfMissing(slice []int, i []int) []int {
 	for _, ele := range i {

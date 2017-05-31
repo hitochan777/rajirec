@@ -1,8 +1,10 @@
-hash: 9af583fbd97da26e0e58966c2d4af4b929700a17c61d6a943c68a9f51e144356
-updated: 2017-05-31T07:23:55.880754173+09:00
+hash: 8eb28540d710649b5b2947a991ea43743f60803ee19ee85650d129c671d50ef1
+updated: 2017-05-31T07:26:59.301782639+09:00
 imports:
 - name: github.com/google/subcommands
   version: ce3d4cfc062faac7115d44e5befec8b5a08c3faa
+- name: github.com/jcelliott/lumber
+  version: dd349441af25132d146d7095c6693a15431fc9b1
 - name: github.com/nanobox-io/golang-scribble
   version: da3a159a462297745592fd615d4bcebec94b54c6
 testImports: []

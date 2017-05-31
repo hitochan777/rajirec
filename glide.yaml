@@ -2,3 +2,4 @@ package: github.com/hitochan777/rajirec
 import:
 - package: github.com/google/subcommands
 - package: github.com/nanobox-io/golang-scribble
+- package: github.com/jcelliott/lumber
