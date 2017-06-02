@@ -2,7 +2,6 @@ package rajirec
 
 import (
     "github.com/nanobox-io/golang-scribble"
-	"log"
 )
 
 type DBManager struct {
@@ -11,27 +10,34 @@ type DBManager struct {
 	db *scribble.Driver
 }
 
-func NewDBManager(collection, resource string) (*DBManager, error) {
-	db, err := scribble.New(".", nil)
+func NewDBManager(dir, collection, resource string) (*DBManager, error) {
+	db, err := scribble.New(dir, nil)
 	dbManager := &DBManager{collection, resource,db}
 	return dbManager, err
 }
 
-func (dbm *DBManager) SaveSchedule(sched Schedule) bool {
-	if err := dbm.db.Write(dbm.collection, dbm.resource, sched); err != nil {
-		log.Println(err)
-		return false
+func (dbm *DBManager) SaveSchedule(sched Schedule) error {
+	schedules := dbm.GetSchedules()
+	schedules = append(schedules, sched)
+	if err := dbm.db.Write(dbm.collection, dbm.resource, schedules); err != nil {
+		return err
 	}
-	return true
+	return nil
 }
 
 func (dbm *DBManager) GetSchedules() []Schedule {
 	scheds := []Schedule{}
 	if err := dbm.db.Read(dbm.collection, dbm.resource, &scheds); err != nil {
-		log.Fatal("Error", err)
+		return []Schedule{}
 	}
 	return scheds
 }
 
+func (dbm *DBManager) GetCollection() string {
+	return dbm.collection
+}
 
+func (dbm *DBManager) GetResource() string {
+	return dbm.resource
+}
 
