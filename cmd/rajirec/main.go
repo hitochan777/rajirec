@@ -14,6 +14,7 @@ func main(){
 	subcommands.Register(&rajirec.RecordCmd{}, "")
 	subcommands.Register(&rajirec.AreaCmd{}, "")
 	subcommands.Register(&rajirec.BookCmd{}, "")
+	subcommands.Register(&rajirec.ServerCmd{}, "")
 	flag.Parse()
 	ctx := context.Background()
 	os.Exit(int(subcommands.Execute(ctx)))
