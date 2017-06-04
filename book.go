@@ -7,6 +7,7 @@ import (
 	//"github.com/jasonlvhit/gocron"
 	"flag"
 	"github.com/google/subcommands"
+	"log"
 )
 
 type BookCmd struct {
@@ -20,16 +21,21 @@ func (b *BookCmd) SetFlags(f *flag.FlagSet) {
 	f.BoolVar(&b.list, "list", false, "List bookings")
 }
 func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	config := NewConfig(SETTING_FILENAME)
 	if b.list {
-		//TODO: get booking info from database
+		if dbm, err := NewDBManager(config.DB.DBDir, config.DB.DBNAME, config.DB.TableName); err != nil {
+			log.Println(err)
+			return subcommands.ExitFailure
+		} else {
+			schedules := dbm.GetSchedules()
+			fmt.Printf("%v", schedules)
+		}
 	} else {
 		var date, duration string
 		fmt.Print("Date: ")
 		fmt.Scanf("%s", &date)
 		fmt.Print("Duration: ")
 		fmt.Scanf("%s", &duration)
-
-
 	}
 	return subcommands.ExitSuccess
 }

@@ -31,9 +31,9 @@ func (r *RecordCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (r *RecordCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	config := NewConfig(SETTING_FILENAME)
 	log.Println("recording...")
-	areas := NewAreas(API_URL)
-
+	areas := NewAreas(config.General.API_URL)
 	Record(areas[r.stationId].R2, r.outputFile, r.duration)
 	return subcommands.ExitSuccess
 }

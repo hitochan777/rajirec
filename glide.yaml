@@ -3,3 +3,4 @@ import:
 - package: github.com/google/subcommands
 - package: github.com/nanobox-io/golang-scribble
 - package: github.com/jcelliott/lumber
+- package: gopkg.in/yaml.v2

@@ -4,32 +4,83 @@ import (
 	"log"
 	"flag"
 	"github.com/google/subcommands"
-	"os"
 	"context"
+	"strings"
+	"io/ioutil"
+	"gopkg.in/yaml.v2"
+	"fmt"
+	"os"
 )
 
-const SETTING_FILENAME = ".rajirec.yaml"
+const SETTING_FILENAME = "rajirec.yml"
 
 type SettingCmd struct {
-	area string
+	action string
+	key string
 }
 
 func (*SettingCmd) Name() string { return "setting" }
 func (*SettingCmd) Synopsis() string { return "Change setting" }
 func (*SettingCmd) Usage() string {return "rajirec setting"}
 func (s *SettingCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&s.area, "area", "", "duration of recording")
-	if s.area == "" {
-		log.Fatal("")
+	f.StringVar(&s.action, "action", "", "")
+	f.StringVar(&s.key, "key", "", "")
+	log.Println(s.action)
+	switch s.action {
+	case "show":
+		config := ReadConfig()
+		if s.key == "" {
+			fmt.Println(config)
+			break
+		}
+		for _, key := range GetKeys(s.key) {
+			config = map[interface{}]interface{}(config[key])
+		}
+		fmt.Println(config)
+		break
+	case "set":
+		if s.key == "" {
+			log.Println(s.Usage())
+			os.Exit(int(subcommands.ExitFailure))
+		}
+
+		keys := GetKeys(s.key)
+
+		break
+	default:
+		log.Println(s.Usage())
 		os.Exit(int(subcommands.ExitFailure))
 	}
 }
 
-func (s *SettingCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	if s.area == "" {
-
-	}
+func (s *SettingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	return subcommands.ExitSuccess
 }
 
-const API_URL = "http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml";
+func GetKeys(key string) []string {
+	return strings.Split(key, ".")
+}
+
+type Config struct {
+	General struct {
+		API_URL string `yaml:"api_url"`
+	} `yaml:"general"`
+
+	DB struct {
+		DBDir string `yaml:"db_dir"`
+		DBNAME string `yaml:"db_name"`
+		TableName string `yaml:"table_name"`
+	} `yaml:"db"`
+}
+
+func NewConfig(fname string) Config {
+	config := Config{}
+	if raw, err := ioutil.ReadFile(fname); err != nil {
+		log.Fatal(err)
+	} else {
+		if err := yaml.Unmarshal(raw, &config); err != nil{
+			log.Fatal(err)
+		}
+	}
+	return config
+}

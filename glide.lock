@@ -1,10 +1,14 @@
-hash: 8eb28540d710649b5b2947a991ea43743f60803ee19ee85650d129c671d50ef1
-updated: 2017-05-31T07:26:59.301782639+09:00
+hash: 56c17feb90f580bae38da7d86212a333fb499c9bc8cdc07255a8cfd8193c60a8
+updated: 2017-06-04T16:45:06.252344964+09:00
 imports:
 - name: github.com/google/subcommands
   version: ce3d4cfc062faac7115d44e5befec8b5a08c3faa
+- name: github.com/jasonlvhit/gocron
+  version: 42a5804d37aa0b9239b265e894a16b8edbf52d54
 - name: github.com/jcelliott/lumber
   version: dd349441af25132d146d7095c6693a15431fc9b1
 - name: github.com/nanobox-io/golang-scribble
   version: da3a159a462297745592fd615d4bcebec94b54c6
+- name: gopkg.in/yaml.v2
+  version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b
 testImports: []

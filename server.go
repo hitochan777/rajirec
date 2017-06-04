@@ -4,6 +4,9 @@ import (
 	"flag"
 	"context"
 	"github.com/google/subcommands"
+	"github.com/jasonlvhit/gocron"
+	"fmt"
+	"log"
 )
 
 type ServerCmd struct {
@@ -27,6 +30,18 @@ func (s *ServerCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	dbm, err := NewDBManager("db", "schedule", "schedule")
+	if err != nil {
+		log.Println("No schedule is found. Please book at least once.")
+		return subcommands.ExitFailure
+	}
+	schedules := dbm.GetSchedules()
+	for _, schedule := range schedules {
+		schedule
+	}
 
-	return subcommands.ExitSuccess
+	gocron.Every(10).Seconds().Do(func(){
+		fmt.Println("Hello")
+	})
+	<- gocron.Start()
 }
