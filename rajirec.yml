@@ -1,0 +1,7 @@
+general:
+  api_url: http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml
+
+db:
+  db_dir: "db"
+  db_name: "rajirec"
+  table_name: "book"
