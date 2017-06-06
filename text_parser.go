@@ -85,7 +85,7 @@ func getCronJob(d int, t int) *gocron.Job {
 }
 
 func NewSchedule(time []int, day []int) *Schedule {
-	return &Schedule{time, day}
+	return &Schedule{time, day, 0, ""}
 }
 
 type Parser struct {

@@ -8,7 +8,6 @@ import (
 	"flag"
 	"github.com/google/subcommands"
 	"log"
-	"go/parser"
 )
 
 type BookCmd struct {
