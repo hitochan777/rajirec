@@ -25,35 +25,26 @@ func (*SettingCmd) Usage() string {return "rajirec setting"}
 func (s *SettingCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&s.action, "action", "", "")
 	f.StringVar(&s.key, "key", "", "")
+}
+
+func (s *SettingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	config := NewConfig(SETTING_FILENAME)
 	log.Println(s.action)
 	switch s.action {
 	case "show":
-		config := ReadConfig()
-		if s.key == "" {
-			fmt.Println(config)
-			break
-		}
-		for _, key := range GetKeys(s.key) {
-			config = map[interface{}]interface{}(config[key])
-		}
 		fmt.Println(config)
 		break
 	case "set":
+		fmt.Errorf("Not implemented") // TODO: implementation
 		if s.key == "" {
 			log.Println(s.Usage())
 			os.Exit(int(subcommands.ExitFailure))
 		}
-
-		keys := GetKeys(s.key)
-
 		break
 	default:
 		log.Println(s.Usage())
 		os.Exit(int(subcommands.ExitFailure))
 	}
-}
-
-func (s *SettingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	return subcommands.ExitSuccess
 }
 

@@ -1,0 +1,6 @@
+general:
+  api_url: "http://www.hoge.com/api.xml"
+db:
+  db_dir: "dbdir"
+  db_name: "dbname"
+  table_name: "tablename"
