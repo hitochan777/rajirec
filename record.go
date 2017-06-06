@@ -25,7 +25,7 @@ func (*RecordCmd) Usage() string {
 	return "Record live stream\n"
 }
 func (r *RecordCmd) SetFlags(f *flag.FlagSet) {
-	f.IntVar(&r.duration, "duration", 0, "duration of recording")
+	f.IntVar(&r.duration, "duration", 0, "duration of recording(min)")
 	f.StringVar(&r.stationId, "areaid", "", "Station ID")
 	f.StringVar(&r.outputFile, "output", "", "path to output file")
 }
