@@ -5,13 +5,14 @@ import (
 	"strconv"
 	"log"
 	"github.com/jasonlvhit/gocron"
-	"time"
 	"fmt"
 )
 
 type Schedule struct {
 	Time []int
 	Day []int
+	Duration int
+	StationID string
 }
 
 type ParseError struct {
@@ -74,8 +75,11 @@ func getCronJob(d int, t int) *gocron.Job {
 			return nil
 	}
 
-	duration := time.Duration(t)
-	timeString := fmt.Sprintf("%d:%d", duration.Hours(), duration.Minutes())
+	var hours int = t / 3600
+	var minutes int = t / 60
+	//var seconds int = t % 60
+
+	timeString := fmt.Sprintf("%d:%d", hours, minutes)
 	job = job.At(timeString)
 	return job
 }
@@ -95,6 +99,10 @@ func NewParser() *Parser {
 	schedule := NewSchedule([]int{}, []int{})
 	parser := &Parser{tokenizer:tokenizer, schedule:schedule}
 	return parser
+}
+
+func (p *Parser) GetSchedule() Schedule {
+	return *p.schedule
 }
 
 func (p *Parser) getCurrentToken() *Token {

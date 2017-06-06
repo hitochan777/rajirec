@@ -37,11 +37,15 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 	}
 	schedules := dbm.GetSchedules()
 	for _, schedule := range schedules {
-		schedule
+		jobs := schedule.GetCronJobs()
+		for _, job := range jobs {
+			job.Do(Record, 1, 2)
+		}
 	}
 
 	gocron.Every(10).Seconds().Do(func(){
 		fmt.Println("Hello")
 	})
 	<- gocron.Start()
+	return subcommands.ExitSuccess
 }
