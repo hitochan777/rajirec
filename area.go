@@ -24,3 +24,25 @@ func (r *AreaCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 	}
 	return subcommands.ExitSuccess
 }
+
+type Area struct {
+	Areajp string `xml:"areajp"`
+	Area string `xml:"area"`
+	R1 string `xml:"r1"`
+	R2 string `xml:"r2"`
+	Fm string `xml:"fm"`
+}
+
+type Areas map[string]Area
+
+func NewAreas(configUrl string) Areas {
+	areas := struct {
+		Areas []Area `xml:"stream_url>data"`
+	}{}
+	areaMap := Areas{}
+	FetchXML(configUrl, &areas)
+	for _, area := range areas.Areas {
+		areaMap[area.Area] = area
+	}
+	return areaMap
+}
