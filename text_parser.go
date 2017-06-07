@@ -12,6 +12,7 @@ type Schedule struct {
 	Time []int
 	Day []int
 	Duration int
+	Channel string
 	StationID string
 }
 
@@ -85,7 +86,7 @@ func getCronJob(d int, t int) *gocron.Job {
 }
 
 func NewSchedule(time []int, day []int) *Schedule {
-	return &Schedule{time, day, 0, ""}
+	return &Schedule{time, day, 0, "", ""}
 }
 
 type Parser struct {

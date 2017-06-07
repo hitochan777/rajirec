@@ -3,11 +3,10 @@ package rajirec
 import (
 	"fmt"
 	"context"
-
-	//"github.com/jasonlvhit/gocron"
 	"flag"
-	"github.com/google/subcommands"
 	"log"
+
+	"github.com/google/subcommands"
 )
 
 type BookCmd struct {
@@ -15,17 +14,29 @@ type BookCmd struct {
 	Start string
 	Duration int
 	StationID string
+	Channel string
 }
 
-func (*BookCmd) Name() string { return "book" }
-func (*BookCmd) Synopsis() string { return "Book record" }
-func (*BookCmd) Usage() string {return "rajirec book"}
+func (*BookCmd) Name() string {
+	return "book"
+}
+
+func (*BookCmd) Synopsis() string {
+	return "Book record"
+}
+
+func (*BookCmd) Usage() string {
+	return "rajirec book"
+}
+
 func (b *BookCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&b.Action, "action", "", "Action to take")
 	f.StringVar(&b.Start, "schedule", "", "String representing schedule")
-	f.IntVar(&b.Duration, "duration", 0, "duration(minutes)")
-	f.StringVar(&b.StationID, "station_id", "", "station ID")
+	f.IntVar(&b.Duration, "duration", 0, "Duration(minutes)")
+	f.StringVar(&b.StationID, "station_id", "", "Station ID")
+	f.StringVar(&b.Channel, "channel", "fm", "Channel")
 }
+
 func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	var err error
 	var dbm *DBManager
@@ -57,6 +68,7 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 	}
 	schedule := parser.GetSchedule()
 	schedule.StationID = b.StationID
+	schedule.Channel = b.Channel
 	schedule.Duration = b.Duration
 
 	log.Printf("Saving a schedule %v", schedule)
@@ -64,8 +76,7 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 		log.Fatal(err)
 	}
 	log.Println("Successfully saved")
-
-	// Record: TODO: impelement
+	log.Println("If you are running the server, you need to restart it to reload the new bookings.")
 
 	return subcommands.ExitSuccess
 }

@@ -41,7 +41,7 @@ func (r *RecordCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 func Record(streamURL string, outputPath string, duration int) {
 	rtmpdumpPath, err := exec.LookPath("rtmpdump")
 	if err != nil {
-		log.Fatal("rtmpdump is not installed")
+		log.Fatal("rtmpdump is not installed. Please install it.")
 	}
 	u, err := url.Parse(streamURL)
 	rtmp := u.Scheme + "://" + u.Host

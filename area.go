@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/google/subcommands"
+	"errors"
 )
 
 type AreaCmd struct {}
@@ -45,4 +46,16 @@ func NewAreas(configUrl string) Areas {
 		areaMap[area.Area] = area
 	}
 	return areaMap
+}
+
+func (areas *Areas) GetStreamURL(stationID, channel string) (string, error) {
+	switch channel{
+	case "fm":
+		return (*areas)[stationID].Fm, nil
+	case "r1":
+		return (*areas)[stationID].R1, nil
+	case "r2":
+		return (*areas)[stationID].R2, nil
+	}
+	return "", errors.New("Invalid channel")
 }
