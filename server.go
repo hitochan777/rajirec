@@ -5,7 +5,6 @@ import (
 	"context"
 	"github.com/google/subcommands"
 	"github.com/jasonlvhit/gocron"
-	"fmt"
 	"log"
 )
 
@@ -30,7 +29,9 @@ func (s *ServerCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	dbm, err := NewDBManager("db", "schedule", "schedule")
+	config := NewConfig(SETTING_FILENAME)
+	areas := NewAreas(config.General.API_URL)
+	dbm, err := NewDBManager(config.DB.DBDir, config.DB.DBNAME, config.DB.TableName)
 	if err != nil {
 		log.Println("No schedule is found. Please book at least once.")
 		return subcommands.ExitFailure
@@ -39,13 +40,15 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 	for _, schedule := range schedules {
 		jobs := schedule.GetCronJobs()
 		for _, job := range jobs {
-			job.Do(Record, 1, 2)
+			streamURL, err := areas.GetStreamURL(schedule.StationID, schedule.Channel)
+			if err != nil {
+				log.Fatal(err)
+			}
+			job.Do(Record, streamURL, "test", schedule.Duration)
+			log.Printf("Registered a schedule %v\n", job)
 		}
 	}
 
-	gocron.Every(10).Seconds().Do(func(){
-		fmt.Println("Hello")
-	})
 	<- gocron.Start()
 	return subcommands.ExitSuccess
 }
