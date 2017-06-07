@@ -2,7 +2,6 @@ package rajirec
 
 import (
 	"log"
-	"errors"
 	"net/http"
 	"io/ioutil"
 	"encoding/xml"
