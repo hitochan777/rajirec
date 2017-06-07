@@ -6,6 +6,7 @@ import (
 	"github.com/google/subcommands"
 	"github.com/jasonlvhit/gocron"
 	"log"
+	"time"
 )
 
 type ServerCmd struct {
@@ -21,11 +22,10 @@ func (*ServerCmd) Synopsis() string {
 }
 
 func (*ServerCmd) Usage() string {
-	return "TODO: usage"
+	return "server"
 }
 
 func (s *ServerCmd) SetFlags(f *flag.FlagSet) {
-	f.IntVar(&s.port, "port", 8080, "port")
 }
 
 func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
@@ -44,11 +44,18 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 			if err != nil {
 				log.Fatal(err)
 			}
-			job.Do(Record, streamURL, "test", schedule.Duration)
+			job.Do(ServerRecord, streamURL, schedule.Duration)
 			log.Printf("Registered a schedule %v\n", job)
 		}
 	}
 
 	<- gocron.Start()
 	return subcommands.ExitSuccess
+}
+
+func ServerRecord(streamURL string, duration int) {
+	nowString := time.Now().String()
+	outputPath := nowString + "@" + streamURL
+	log.Printf("Output Path: %s\n", outputPath)
+	Record(streamURL, outputPath, duration)
 }
