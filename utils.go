@@ -28,7 +28,11 @@ type Map struct {
 	value interface{}
 }
 
-func (m *Map) Get(key string) *Map {
+func NewMap() *Map {
+	return &Map{children: make(map[string]*Map), value: nil}
+}
+
+func (m *Map) get(key string) *Map {
 	val, ok := m.children[key]
 	if ok {
 		if val == nil {
@@ -37,17 +41,29 @@ func (m *Map) Get(key string) *Map {
 			return val
 		}
 	} else {
-		m.children[key] = &Map{}
+		m.children[key] = NewMap()
 		return m.children[key]
 	}
+}
+
+func (m *Map) Get(keys ...string) *Map {
+	m1 := m
+	for _, key := range keys {
+		m1 = m1.get(key)
+	}
+	return m1
 }
 
 func (m *Map) Set(value interface{}, keys ...string) {
 	m1 := m
 	for _, key := range keys {
-		m1 = m.Get(key)
+		m1 = m1.Get(key)
 	}
 	m1.value = value
+}
+
+func (m *Map) GetValue() interface{} {
+	return m.value
 }
 
 func FetchXML(url string, v interface{}) {
