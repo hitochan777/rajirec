@@ -54,6 +54,8 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 
 func ServerRecord(streamURL string, duration int) {
 	outputPath := GenerateHash()
-	log.Printf("Output Path: %s\n", outputPath)
+	log.Printf("Started to record on %s for %d minutes\n" +
+		" Recording is saved to %s", streamURL, duration, outputPath)
 	Record(streamURL, outputPath, duration)
+	log.Printf("Finished recording to %s\n", outputPath)
 }

@@ -42,7 +42,8 @@ func (sched *Schedule) GetCronJobs() []*gocron.Job {
 	var jobs []*gocron.Job
 	for _, day := range sched.Day {
 		for _, time := range sched.Time {
-			jobs = append(jobs, getCronJob(day, time))
+			job := getCronJob(day, time)
+			jobs = append(jobs, job)
 		}
 	}
 	return jobs
@@ -77,7 +78,7 @@ func getCronJob(d int, t int) *gocron.Job {
 	}
 
 	var hours int = t / 3600
-	var minutes int = t / 60
+	var minutes int = (t % 3600) / 60
 	//var seconds int = t % 60
 
 	timeString := fmt.Sprintf("%d:%d", hours, minutes)

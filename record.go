@@ -53,7 +53,7 @@ func Record(streamURL string, outputPath string, duration int) {
 		"--playpath", playPath,
 		"--swfVfy", "http://www3.nhk.or.jp/netradio/files/swf/rtmpe.swf",
 		"--app", app,
-		"--stop", strconv.Itoa(duration),
+		"--stop", strconv.Itoa(duration * 60),
 		"--live",
 		"-o", outputPath,
 	).Run()
