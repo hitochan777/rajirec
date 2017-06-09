@@ -10,12 +10,13 @@ import (
 )
 
 type BookCmd struct {
-	Action string
+	List bool
 	Start string
 	Duration int
 	StationID string
 	Channel string
 }
+
 
 func (*BookCmd) Name() string {
 	return "book"
@@ -30,14 +31,31 @@ func (*BookCmd) Usage() string {
 }
 
 func (b *BookCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&b.Action, "action", "", "Action to take")
-	f.StringVar(&b.Start, "schedule", "", "String representing schedule")
+	f.BoolVar(&b.List, "list", false, "list all the bookings")
+	f.StringVar(&b.Start, "start", "", "String representing schedule")
 	f.IntVar(&b.Duration, "duration", 0, "Duration(minutes)")
 	f.StringVar(&b.StationID, "station_id", "", "Station ID")
 	f.StringVar(&b.Channel, "channel", "fm", "Channel")
 }
 
+func (b *BookCmd) Validate() bool {
+	if b.List {
+		if b.Start != "" || b.Duration != 0 || b.StationID != "" || b.Channel != "fm" {
+			return false
+		}
+	} else {
+		if b.Start == "" || b.Duration == 0 || b.StationID == "" {
+			return false
+		}
+	}
+	return true
+}
+
 func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if !b.Validate() {
+		fmt.Println(b.Usage())
+		return subcommands.ExitFailure
+	}
 	var err error
 	var dbm *DBManager
 	config := NewConfig(SETTING_FILENAME)
@@ -46,7 +64,7 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 	if err != nil {
 		log.Fatal(err)
 	}
-	if b.Action == "list" {
+	if b.List {
 		if dbm, err := NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName); err != nil {
 			log.Println(err)
 			return subcommands.ExitFailure
@@ -55,9 +73,6 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 			fmt.Printf("%v", schedules)
 		}
 		return subcommands.ExitSuccess
-	} else if b.Action != "" {
-		fmt.Println(b.Usage())
-		return subcommands.ExitFailure
 	}
 
 	parser := NewParser()
