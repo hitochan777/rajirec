@@ -1,6 +1,8 @@
 general:
-  api_url: "http://www.hoge.com/api.xml"
+  api_url: http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml
+
 db:
-  db_dir: "dbdir"
-  db_name: "dbname"
-  table_name: "tablename"
+  db_dir: "db"
+  db_name: "rajirec"
+  book_table: "book"
+  record_table: "record"

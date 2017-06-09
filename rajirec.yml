@@ -4,4 +4,7 @@ general:
 db:
   db_dir: "db"
   db_name: "rajirec"
-  table_name: "book"
+  book_table: "book"
+  record_table: "record"
+
+

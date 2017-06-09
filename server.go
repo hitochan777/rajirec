@@ -31,7 +31,7 @@ func (s *ServerCmd) SetFlags(f *flag.FlagSet) {
 func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	config := NewConfig(SETTING_FILENAME)
 	areas := NewAreas(config.General.API_URL)
-	dbm, err := NewDBManager(config.DB.DBDir, config.DB.DBNAME, config.DB.TableName)
+	dbm, err := NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
 	if err != nil {
 		log.Println("No schedule is found. Please book at least once.")
 		return subcommands.ExitFailure

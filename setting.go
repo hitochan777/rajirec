@@ -58,9 +58,10 @@ type Config struct {
 	} `yaml:"general"`
 
 	DB struct {
-		DBDir string `yaml:"db_dir"`
-		DBNAME string `yaml:"db_name"`
-		TableName string `yaml:"table_name"`
+		Dir string `yaml:"db_dir"`
+		Name string `yaml:"db_name"`
+		BookTableName string `yaml:"book_table"`
+		RecordTableName string `yaml:"record_table"`
 	} `yaml:"db"`
 }
 

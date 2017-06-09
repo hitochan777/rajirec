@@ -41,13 +41,13 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 	var err error
 	var dbm *DBManager
 	config := NewConfig(SETTING_FILENAME)
-	dbm, err = NewDBManager(config.DB.DBDir, config.DB.DBNAME, config.DB.TableName)
+	dbm, err = NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	if b.Action == "list" {
-		if dbm, err := NewDBManager(config.DB.DBDir, config.DB.DBNAME, config.DB.TableName); err != nil {
+		if dbm, err := NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName); err != nil {
 			log.Println(err)
 			return subcommands.ExitFailure
 		} else {
