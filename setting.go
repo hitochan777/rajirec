@@ -55,6 +55,7 @@ func GetKeys(key string) []string {
 type Config struct {
 	General struct {
 		API_URL string `yaml:"api_url"`
+		OutputDir string `yaml:"output_dir"`
 	} `yaml:"general"`
 
 	DB struct {

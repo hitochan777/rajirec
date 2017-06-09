@@ -1,5 +1,6 @@
 general:
-  api_url: http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml
+  api_url: "http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml"
+  output_dir: "./recordings"
 
 db:
   db_dir: "db"

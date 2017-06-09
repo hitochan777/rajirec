@@ -6,7 +6,6 @@ import (
 	"github.com/google/subcommands"
 	"github.com/jasonlvhit/gocron"
 	"log"
-	"time"
 )
 
 type ServerCmd struct {
@@ -54,8 +53,7 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 }
 
 func ServerRecord(streamURL string, duration int) {
-	nowString := time.Now().String()
-	outputPath := nowString + "@" + streamURL
+	outputPath := GenerateHash()
 	log.Printf("Output Path: %s\n", outputPath)
 	Record(streamURL, outputPath, duration)
 }

@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/xml"
+	"time"
+	"crypto/sha1"
+	"encoding/hex"
 )
 
 func AppendAllIfMissing(slice []int, i []int) []int {
@@ -76,4 +79,13 @@ func FetchXML(url string, v interface{}) {
 	if err := xml.Unmarshal(body, v); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func GenerateHash() string {
+	curTime := time.Now().String()
+	hash := sha1.New()
+	hash.Write([]byte(curTime))
+	sha1_hash := hex.EncodeToString(hash.Sum(nil))
+	return sha1_hash
+
 }
