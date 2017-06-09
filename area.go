@@ -11,10 +11,19 @@ import (
 
 type AreaCmd struct {}
 
-func (*AreaCmd) Name() string { return "area" }
-func (*AreaCmd) Synopsis() string { return "Show area information" }
-func (*AreaCmd) Usage() string {return "rajirec area"}
+func (*AreaCmd) Name() string {
+	return "area"
+}
+
+func (*AreaCmd) Synopsis() string {
+	return "Show area information"
+}
+
+func (*AreaCmd) Usage() string {
+	return "rajirec area"
+}
 func (r *AreaCmd) SetFlags(f *flag.FlagSet) {}
+
 func (r *AreaCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	config := NewConfig(SETTING_FILENAME)
 	areas := NewAreas(config.General.API_URL)
