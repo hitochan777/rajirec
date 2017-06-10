@@ -10,7 +10,7 @@ A tool written in golang to record internet radio streams from らじるらじ�
 ## Install
 
 ```
-go get github.com/hitochan777/rajirec
+go get github.com/hitochan777/rajirec/cmd/rajirec
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ Currently we support m4a only.
 Supported channels are r1, r2, and fm.
 
 ```
-rajirec record -areaid tokyo -channel r2 -duration 5 -output output.m4a
+$ rajirec record -areaid tokyo -channel r2 -duration 5 -output output.m4a
 ```
 
 If you want to record regularly, you should first book records with the following command.
