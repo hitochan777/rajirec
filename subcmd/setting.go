@@ -19,6 +19,15 @@ type Config struct {
 	} `yaml:"db"`
 }
 
+func GetDefaultConfig() Config {
+	conf := Config{}
+	conf.General.API_URL = "http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml"
+	conf.DB.Dir = "~/rajirec"
+	conf.DB.Name = "rajirec"
+	conf.DB.BookTableName = "book"
+	return conf
+}
+
 func NewConfig(fname ...string) *Config {
 	if len(fname) >= 2 {
 		return nil
@@ -29,7 +38,8 @@ func NewConfig(fname ...string) *Config {
 	if len(fname) == 1 {
 		configFilename = fname[0]
 	} else if configFilename = os.Getenv("RAJIREC_CONFIG"); configFilename == "" {
-		configFilename = "~/.rajirec.yml"
+		defaultConfig := GetDefaultConfig()
+		return &defaultConfig
 	}
 
 	config := &Config{}
