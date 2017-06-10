@@ -49,9 +49,9 @@ This will book a recording that starts on every Saturday at 22:00, and lasts for
 `-prefix` is the prefix of the output filenames. 
 Each output file will be of the form `{prefix}_{start}.m4a` where `start` is the start time of the recording. 
 
-# License
+## License
 
 The MIT License
 
-# Author
+## Author
 Hitoshi Otsuki
