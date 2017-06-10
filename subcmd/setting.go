@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
 	"os"
+	"path"
 )
 
 type Config struct {
@@ -22,7 +23,7 @@ type Config struct {
 func GetDefaultConfig() Config {
 	conf := Config{}
 	conf.General.API_URL = "http://www3.nhk.or.jp/netradio/app/config_pc_2016.xml"
-	conf.DB.Dir = "~/rajirec"
+	conf.DB.Dir = path.Join(os.Getenv("HOME"), "rajirec")
 	conf.DB.Name = "rajirec"
 	conf.DB.BookTableName = "book"
 	return conf
