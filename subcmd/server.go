@@ -43,11 +43,12 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 		jobs := sched.GetCronJobs()
 		for _, job := range jobs {
 			streamURL, err := areas.GetStreamURL(sched.StationID, sched.Channel)
+
 			if err != nil {
 				log.Fatal(err)
 			}
-			outputFile := sched.Prefix + "_" + time.Now().String() + ".m4a"
-			job.Do(ServerRecord, streamURL, outputFile, sched.Duration)
+
+            job.Do(ServerRecord, streamURL, sched.Prefix, sched.Duration)
 			log.Printf("Registered a schedule %v\n", job)
 		}
 	}
@@ -56,7 +57,9 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 	return subcommands.ExitSuccess
 }
 
-func ServerRecord(streamURL string, outputPath string, duration int) {
+func ServerRecord(streamURL string, prefix string, duration int) {
+    outputPath := prefix + "_" + time.Now().String() + ".m4a"
+
 	log.Printf("Started to record on %s for %d minutes\n" +
 		" Recording is saved to %s", streamURL, duration, outputPath)
 	Record(streamURL, outputPath, duration)
