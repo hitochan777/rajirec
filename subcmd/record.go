@@ -17,6 +17,7 @@ type RecordCmd struct {
 	duration int
 	stationId string
 	outputFile string
+	channel string
 }
 
 func (*RecordCmd) Name() string { return "record" }
@@ -28,13 +29,18 @@ func (r *RecordCmd) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&r.duration, "duration", 0, "duration of recording(min)")
 	f.StringVar(&r.stationId, "areaid", "", "Station ID")
 	f.StringVar(&r.outputFile, "output", "", "path to output file")
+	f.StringVar(&r.channel, "channel", "fm", "Channel")
 }
 
 func (r *RecordCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	config := NewConfig(SETTING_FILENAME)
 	log.Println("recording...")
 	areas := NewAreas(config.General.API_URL)
-	Record(areas[r.stationId].R2, r.outputFile, r.duration)
+	if streamURL, err := areas.GetStreamURL(r.stationId, r.channel); err != nil {
+		log.Fatal(err)
+	} else {
+		Record(streamURL, r.outputFile, r.duration)
+	}
 	return subcommands.ExitSuccess
 }
 
