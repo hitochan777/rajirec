@@ -3,9 +3,7 @@ general:
   output_dir: "./recordings"
 
 db:
-  db_dir: "db"
+  db_dir: "rajirec_db"
   db_name: "rajirec"
   book_table: "book"
   record_table: "record"
-
-

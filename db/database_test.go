@@ -38,8 +38,8 @@ func TestDBMamager_SaveSchedules(t *testing.T) {
 		return
 	}
 	expected := []schedule.Schedule{
-		{[]int{0, 30},[]int{1, 3}, 0, "", ""},
-		{[]int{15},[]int{0}, 0, "", ""},
+		{Time: []int{0, 30}, Day: []int{1, 3}},
+		{Time: []int{15}, Day: []int{0}},
 	}
 	for _, elem := range expected {
 		if err := dbm.SaveSchedule(elem); err != nil {

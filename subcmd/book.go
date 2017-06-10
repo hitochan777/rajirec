@@ -17,6 +17,7 @@ type BookCmd struct {
 	Duration int
 	StationID string
 	Channel string
+	Prefix string
 }
 
 
@@ -38,15 +39,18 @@ func (b *BookCmd) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&b.Duration, "duration", 0, "Duration(minutes)")
 	f.StringVar(&b.StationID, "station_id", "", "Station ID")
 	f.StringVar(&b.Channel, "channel", "fm", "Channel")
+	f.StringVar(&b.Prefix, "prefix", "", "Prefix for output file. " +
+		"Each output file will be save as '{PREFIX}_{START}.m4a' where {PREFIX} is the prefix and" +
+		"{START} is the time when the recording started")
 }
 
 func (b *BookCmd) Validate() bool {
 	if b.List {
-		if b.Start != "" || b.Duration != 0 || b.StationID != "" || b.Channel != "fm" {
+		if b.Start != "" || b.Duration != 0 || b.StationID != "" || b.Channel != "fm" || b.Prefix != ""{
 			return false
 		}
 	} else {
-		if b.Start == "" || b.Duration == 0 || b.StationID == "" {
+		if b.Start == "" || b.Duration == 0 || b.StationID == "" || b.Prefix == ""{
 			return false
 		}
 	}
@@ -87,6 +91,7 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 	sched.StationID = b.StationID
 	sched.Channel = b.Channel
 	sched.Duration = b.Duration
+	sched.Prefix = b.Prefix
 
 	log.Printf("Saving a schedule %v", sched)
 	if err := dbm.SaveSchedule(sched); err != nil {

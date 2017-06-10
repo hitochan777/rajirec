@@ -9,6 +9,7 @@ import (
 
 	"github.com/hitochan777/rajirec/db"
 	"github.com/hitochan777/rajirec/util"
+	"time"
 )
 
 type ServerCmd struct {
@@ -46,7 +47,8 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 			if err != nil {
 				log.Fatal(err)
 			}
-			job.Do(ServerRecord, streamURL, sched.Duration)
+			outputFile := sched.Prefix + "_" + time.Now().String() + ".m4a"
+			job.Do(ServerRecord, streamURL, outputFile, sched.Duration)
 			log.Printf("Registered a schedule %v\n", job)
 		}
 	}
@@ -55,8 +57,7 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 	return subcommands.ExitSuccess
 }
 
-func ServerRecord(streamURL string, duration int) {
-	outputPath := util.GenerateHash()
+func ServerRecord(streamURL string, outputPath string, duration int) {
 	log.Printf("Started to record on %s for %d minutes\n" +
 		" Recording is saved to %s", streamURL, duration, outputPath)
 	Record(streamURL, outputPath, duration)
