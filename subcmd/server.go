@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/hitochan777/rajirec/db"
-	"github.com/hitochan777/rajirec/util"
 	"time"
 )
 
