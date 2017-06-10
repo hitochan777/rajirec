@@ -1,4 +1,4 @@
-chine:
+machine:
   environment:
     # GOROOT is not set by default
     GOROOT: ""
