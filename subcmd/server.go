@@ -6,6 +6,10 @@ import (
 	"github.com/google/subcommands"
 	"github.com/jasonlvhit/gocron"
 	"log"
+
+	"github.com/hitochan777/rajirec/db"
+	"github.com/hitochan777/rajirec/schedule"
+	"github.com/hitochan777/rajirec/util"
 )
 
 type ServerCmd struct {
@@ -30,20 +34,20 @@ func (s *ServerCmd) SetFlags(f *flag.FlagSet) {
 func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	config := NewConfig(SETTING_FILENAME)
 	areas := NewAreas(config.General.API_URL)
-	dbm, err := NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
+	dbm, err := db.NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
 	if err != nil {
 		log.Println("No schedule is found. Please book at least once.")
 		return subcommands.ExitFailure
 	}
-	schedules := dbm.GetSchedules()
-	for _, schedule := range schedules {
-		jobs := schedule.GetCronJobs()
+	scheds := dbm.GetSchedules()
+	for _, sched := range scheds {
+		jobs := sched.GetCronJobs()
 		for _, job := range jobs {
-			streamURL, err := areas.GetStreamURL(schedule.StationID, schedule.Channel)
+			streamURL, err := areas.GetStreamURL(sched.StationID, sched.Channel)
 			if err != nil {
 				log.Fatal(err)
 			}
-			job.Do(ServerRecord, streamURL, schedule.Duration)
+			job.Do(ServerRecord, streamURL, sched.Duration)
 			log.Printf("Registered a schedule %v\n", job)
 		}
 	}
@@ -53,7 +57,7 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 }
 
 func ServerRecord(streamURL string, duration int) {
-	outputPath := GenerateHash()
+	outputPath := util.GenerateHash()
 	log.Printf("Started to record on %s for %d minutes\n" +
 		" Recording is saved to %s", streamURL, duration, outputPath)
 	Record(streamURL, outputPath, duration)
