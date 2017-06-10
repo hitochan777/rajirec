@@ -27,7 +27,7 @@ func (*AreaCmd) Usage() string {
 func (r *AreaCmd) SetFlags(f *flag.FlagSet) {}
 
 func (r *AreaCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	config := NewConfig(SETTING_FILENAME)
+	config := NewConfig()
 	areas := NewAreas(config.General.API_URL)
 	fmt.Println("area\tarea code")
 	fmt.Println("=================")

@@ -33,7 +33,7 @@ func (r *RecordCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (r *RecordCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	config := NewConfig(SETTING_FILENAME)
+	config := NewConfig()
 	log.Println("recording...")
 	areas := NewAreas(config.General.API_URL)
 	if streamURL, err := areas.GetStreamURL(r.stationId, r.channel); err != nil {

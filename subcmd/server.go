@@ -31,7 +31,7 @@ func (s *ServerCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	config := NewConfig(SETTING_FILENAME)
+	config := NewConfig()
 	areas := NewAreas(config.General.API_URL)
 	dbm, err := db.NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
 	if err != nil {

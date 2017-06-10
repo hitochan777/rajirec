@@ -64,7 +64,7 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 	}
 	var err error
 	var dbm *db.DBManager
-	config := NewConfig(SETTING_FILENAME)
+	config := NewConfig()
 	dbm, err = db.NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
 
 	if err != nil {

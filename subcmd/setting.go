@@ -4,9 +4,8 @@ import (
 	"log"
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
+	"os"
 )
-
-const SETTING_FILENAME = "rajirec.yml"
 
 type Config struct {
 	General struct {
@@ -20,12 +19,25 @@ type Config struct {
 	} `yaml:"db"`
 }
 
-func NewConfig(fname string) Config {
-	config := Config{}
-	if raw, err := ioutil.ReadFile(fname); err != nil {
+func NewConfig(fname ...string) *Config {
+	if len(fname) >= 2 {
+		return nil
+	}
+
+	var configFilename string
+
+	if len(fname) == 1 {
+		configFilename = fname[0]
+	} else if configFilename = os.Getenv("RAJIREC_CONFIG"); configFilename == "" {
+		configFilename = "~/.rajirec.yml"
+	}
+
+	config := &Config{}
+
+	if raw, err := ioutil.ReadFile(configFilename); err != nil {
 		log.Fatal(err)
 	} else {
-		if err := yaml.Unmarshal(raw, &config); err != nil{
+		if err := yaml.Unmarshal(raw, config); err != nil{
 			log.Fatal(err)
 		}
 	}

@@ -12,8 +12,8 @@ func TestNewConfig(t *testing.T) {
 	expected.DB.Dir = "db"
 	expected.DB.Name = "rajirec"
 	expected.DB.BookTableName = "book"
-	if !reflect.DeepEqual(output, expected) {
-		t.Errorf("output: %v\nexpected: %v\n", output, expected)
+	if !reflect.DeepEqual(*output, expected) {
+		t.Errorf("output: %v\nexpected: %v\n", *output, expected)
 		return
 	}
 }
