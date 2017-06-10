@@ -36,24 +36,6 @@ func (dbm *DBManager) GetSchedules() []schedule.Schedule {
 	return scheds
 }
 
-/*func (dbm *DBManager) SaveRecord(record Record) error {
-	records := dbm.GetSchedules()
-	records = append(records, record)
-	if err := dbm.db.Write(dbm.collection, dbm.resource, records); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (dbm *DBManager) GetRecords() []Record {
-	var records interface{}
-	if err := dbm.db.Read(dbm.collection, dbm.resource, &records); err != nil {
-		return []Record{}
-	}
-
-	return []Record{}
-}*/
-
 func (dbm *DBManager) GetCollection() string {
 	return dbm.collection
 }
