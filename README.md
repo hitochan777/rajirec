@@ -48,3 +48,10 @@ $ rajirec book -start "on sat at 22:00" -duration 15 -station_id tokyo -channel 
 This will book a recording that starts on every Saturday at 22:00, and lasts for 15 minutes.
 `-prefix` is the prefix of the output filenames. 
 Each output file will be of the form `{prefix}_{start}.m4a` where `start` is the start time of the recording. 
+
+# License
+
+The MIT License
+
+# Author
+Hitoshi Otsuki
