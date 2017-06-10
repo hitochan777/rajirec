@@ -6,15 +6,15 @@ import (
 	"context"
 	"os"
 
-	"github.com/hitochan777/rajirec"
+	"github.com/hitochan777/rajirec/subcmd"
 )
 
 func main(){
 	subcommands.Register(subcommands.HelpCommand(), "")
-	subcommands.Register(&rajirec.RecordCmd{}, "")
-	subcommands.Register(&rajirec.AreaCmd{}, "")
-	subcommands.Register(&rajirec.BookCmd{}, "")
-	subcommands.Register(&rajirec.ServerCmd{}, "")
+	subcommands.Register(&subcmd.RecordCmd{}, "")
+	subcommands.Register(&subcmd.AreaCmd{}, "")
+	subcommands.Register(&subcmd.BookCmd{}, "")
+	subcommands.Register(&subcmd.ServerCmd{}, "")
 	flag.Parse()
 	ctx := context.Background()
 	os.Exit(int(subcommands.Execute(ctx)))

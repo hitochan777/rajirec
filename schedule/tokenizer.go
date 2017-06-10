@@ -1,4 +1,4 @@
-package rajirec
+package schedule
 
 import (
 	"regexp"

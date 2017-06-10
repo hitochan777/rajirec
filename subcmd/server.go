@@ -1,4 +1,4 @@
-package rajirec
+package subcmd
 
 import (
 	"flag"
@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/hitochan777/rajirec/db"
-	"github.com/hitochan777/rajirec/schedule"
 	"github.com/hitochan777/rajirec/util"
 )
 

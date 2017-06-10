@@ -1,4 +1,4 @@
-package rajirec
+package subcmd
 
 import (
 	"flag"
@@ -7,6 +7,8 @@ import (
 
 	"github.com/google/subcommands"
 	"errors"
+
+	"github.com/hitochan777/rajirec/util"
 )
 
 type AreaCmd struct {}
@@ -50,7 +52,7 @@ func NewAreas(configUrl string) Areas {
 		Areas []Area `xml:"stream_url>data"`
 	}{}
 	areaMap := Areas{}
-	FetchXML(configUrl, &areas)
+	util.FetchXML(configUrl, &areas)
 	for _, area := range areas.Areas {
 		areaMap[area.Area] = area
 	}

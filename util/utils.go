@@ -1,4 +1,4 @@
-package rajirec
+package util
 
 import (
 	"log"

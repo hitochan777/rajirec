@@ -1,4 +1,4 @@
-package rajirec
+package schedule
 
 import (
 	"reflect"
@@ -6,6 +6,8 @@ import (
 	"log"
 	"github.com/jasonlvhit/gocron"
 	"fmt"
+
+	"github.com/hitochan777/rajirec/util"
 )
 
 type Schedule struct {
@@ -172,10 +174,10 @@ func (p *Parser) parseEvery() error {
 	token := p.getCurrentToken()
 	switch token.GetTokenCode() {
 	case WEEKDAY:
-		p.schedule.Day = AppendAllIfMissing(p.schedule.Day, []int{1, 2, 3, 4, 5})
+		p.schedule.Day = util.AppendAllIfMissing(p.schedule.Day, []int{1, 2, 3, 4, 5})
 		break
 	case WEEKEND:
-     	p.schedule.Day = AppendAllIfMissing(p.schedule.Day, []int{0, 6})
+     	p.schedule.Day = util.AppendAllIfMissing(p.schedule.Day, []int{0, 6})
 		break
 	default:
 		return &ParseError{"Failed to Parse in parseEvery"}
@@ -235,7 +237,7 @@ func (p *Parser) parseTime() error {
 	} else {
 		return &ParseError{"Failed to parse in parseTime"}
 	}
-   	p.schedule.Time = AppendIfMissing(p.schedule.Time, time)
+   	p.schedule.Time = util.AppendIfMissing(p.schedule.Time, time)
 	p.nextToken()
 	return nil
 }
@@ -270,7 +272,7 @@ func (p *Parser) parseDay() error {
 	default:
 		return &ParseError{"Failed to parse in parseDay"}
 	}
-	p.schedule.Day = AppendIfMissing(p.schedule.Day, weekday)
+	p.schedule.Day = util.AppendIfMissing(p.schedule.Day, weekday)
 	p.nextToken()
 	return nil
 }

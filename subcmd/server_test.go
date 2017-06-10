@@ -1,3 +1,3 @@
-package rajirec
+package subcmd
 
 

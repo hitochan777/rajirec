@@ -1,4 +1,4 @@
-package rajirec
+package subcmd
 
 import (
 	"fmt"
@@ -7,6 +7,8 @@ import (
 	"log"
 
 	"github.com/google/subcommands"
+	"github.com/hitochan777/rajirec/schedule"
+	"github.com/hitochan777/rajirec/db"
 )
 
 type BookCmd struct {
@@ -57,15 +59,15 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 		return subcommands.ExitFailure
 	}
 	var err error
-	var dbm *DBManager
+	var dbm *db.DBManager
 	config := NewConfig(SETTING_FILENAME)
-	dbm, err = NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
+	dbm, err = db.NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	if b.List {
-		if dbm, err := NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName); err != nil {
+		if dbm, err := db.NewDBManager(config.DB.Dir, config.DB.Name, config.DB.BookTableName); err != nil {
 			log.Println(err)
 			return subcommands.ExitFailure
 		} else {
@@ -75,19 +77,19 @@ func (b *BookCmd) Execute(x context.Context, f *flag.FlagSet, _ ...interface{}) 
 		return subcommands.ExitSuccess
 	}
 
-	parser := NewParser()
+	parser := schedule.NewParser()
 
 	err = parser.Parse(b.Start)
 	if err != nil {
 		log.Fatal(err)
 	}
-	schedule := parser.GetSchedule()
-	schedule.StationID = b.StationID
-	schedule.Channel = b.Channel
-	schedule.Duration = b.Duration
+	sched := parser.GetSchedule()
+	sched.StationID = b.StationID
+	sched.Channel = b.Channel
+	sched.Duration = b.Duration
 
-	log.Printf("Saving a schedule %v", schedule)
-	if err := dbm.SaveSchedule(schedule); err != nil {
+	log.Printf("Saving a schedule %v", sched)
+	if err := dbm.SaveSchedule(sched); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Successfully saved")
