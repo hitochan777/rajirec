@@ -1,4 +1,5 @@
-# rajirec
+# rajirec 
+![CircleCI](https://circleci.com/gh/hitochan777/rajirec.svg?style=svg&circle-token=47fa7b83155124988315c5c41358563a4da33350)
 
 A tool written in golang to record internet radio streams from [らじるらじる (rajirurajiru)](http://www.nhk.or.jp/radio).
 
