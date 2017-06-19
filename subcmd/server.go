@@ -11,6 +11,7 @@ import (
 	"github.com/google/subcommands"
 	"os"
 	"os/signal"
+	"fmt"
 )
 
 type ServerCmd struct {
@@ -57,7 +58,20 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 	go c.Start()
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt, os.Kill)
-	<-sig
+	for {
+		<-sig
+		var quit string
+		for {
+			fmt.Println("Do you really want to quit? (Y/N)")
+			fmt.Scanln(&quit)
+			if quit == "Y" || quit == "N" {
+				break
+			}
+		}
+		if quit == "Y" {
+			break
+		}
+	}
 	return subcommands.ExitSuccess
 }
 
