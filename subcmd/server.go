@@ -3,16 +3,17 @@ package subcmd
 import (
 	"flag"
 	"context"
-	"github.com/google/subcommands"
-	"github.com/jasonlvhit/gocron"
 	"log"
+	"time"
 
 	"github.com/hitochan777/rajirec/db"
-	"time"
+	"github.com/robfig/cron"
+	"github.com/google/subcommands"
+	"os"
+	"os/signal"
 )
 
 type ServerCmd struct {
-	port int
 }
 
 func (*ServerCmd) Name() string {
@@ -38,9 +39,10 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 		log.Println("No schedule is found. Please book at least once.")
 		return subcommands.ExitFailure
 	}
+	c := cron.New()
 	scheds := dbm.GetSchedules()
 	for _, sched := range scheds {
-		jobs := sched.GetCronJobs()
+		jobs := sched.GetCronStrings()
 		for _, job := range jobs {
 			streamURL, err := areas.GetStreamURL(sched.StationID, sched.Channel)
 
@@ -48,12 +50,14 @@ func (s *ServerCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 				log.Fatal(err)
 			}
 
-            job.Do(ServerRecord, streamURL, sched.Prefix, sched.Duration)
+			c.AddFunc(job, func() { ServerRecord(streamURL, sched.Prefix, sched.Duration) })
 			log.Printf("Registered a schedule %v\n", job)
 		}
 	}
-
-	<- gocron.Start()
+	go c.Start()
+	sig := make(chan os.Signal)
+	signal.Notify(sig, os.Interrupt, os.Kill)
+	<-sig
 	return subcommands.ExitSuccess
 }
 
